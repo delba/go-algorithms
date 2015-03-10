@@ -4,7 +4,7 @@ import "sync"
 
 type List struct {
 	Head   *Item
-	Last   *Item
+	Tail   *Item
 	Len    int
 	Locker sync.RWMutex
 }
@@ -23,17 +23,17 @@ func New() *List {
 }
 
 func Insert(value interface{}, list *List) *List {
-	newItem := &Item{value, list.Head, list.Last, list}
+	newItem := &Item{value, list.Head, list.Tail, list}
 	list.Locker.Lock()
 	defer list.Locker.Unlock()
 
 	if list.Head == nil {
 		list.Head = newItem
-		list.Last = newItem
+		list.Tail = newItem
 	} else {
 		list.Head = newItem
 		list.Head.Prev = newItem
-		list.Last.Next = newItem
+		list.Tail.Next = newItem
 	}
 
 	list.Len++
@@ -77,7 +77,7 @@ func Remove(value interface{}, list *List) *List {
 
 	list.Locker.RLock()
 	first := list.First()
-	last := list.Last
+	last := list.Tail
 	list.Locker.RUnlock()
 	list.Locker.Lock()
 	defer list.Locker.Unlock()
