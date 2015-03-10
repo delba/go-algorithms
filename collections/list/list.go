@@ -23,7 +23,13 @@ func New() *List {
 }
 
 func Insert(value interface{}, list *List) *List {
-	newItem := &Item{value, list.Head, list.Tail, list}
+	newItem := &Item{
+		Val:  value,
+		Next: list.Head,
+		Prev: list.Tail,
+		List: list,
+	}
+
 	list.Locker.Lock()
 	defer list.Locker.Unlock()
 
