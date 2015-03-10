@@ -3,62 +3,50 @@ package list
 import "sync"
 
 type List struct {
-	head   *Item
-	last   *Item
-	len    int
-	locker sync.RWMutex
+	Head   *Item
+	Last   *Item
+	Len    int
+	Locker sync.RWMutex
 }
 
 type Item struct {
 	Val  interface{}
-	next *Item
-	prev *Item
-	list *List
+	Next *Item
+	Prev *Item
+	List *List
 }
 
 func New() *List {
 	list := &List{}
-	list.len = 0
+	list.Len = 0
 	return list
 }
 
 func Insert(value interface{}, list *List) *List {
-	newItem := &Item{value, list.head, list.last, list}
-	list.locker.Lock()
-	defer list.locker.Unlock()
+	newItem := &Item{value, list.Head, list.Last, list}
+	list.Locker.Lock()
+	defer list.Locker.Unlock()
 
-	if list.head == nil {
-		list.head = newItem
-		list.last = newItem
+	if list.Head == nil {
+		list.Head = newItem
+		list.Last = newItem
 	} else {
-		list.head = newItem
-		list.head.prev = newItem
-		list.last.next = newItem
+		list.Head = newItem
+		list.Head.Prev = newItem
+		list.Last.Next = newItem
 	}
 
-	list.len++
+	list.Len++
 
 	return list
 }
 
 func (list *List) First() *Item {
-	return list.head
-}
-
-func (list *List) Last() *Item {
-	return list.last
-}
-
-func (item *Item) Prev() *Item {
-	return item.prev
-}
-
-func (item *Item) Next() *Item {
-	return item.next
+	return list.Head
 }
 
 func Has(value interface{}, list *List) bool {
-	if list.head == nil {
+	if list.Head == nil {
 		return false
 	}
 	first := list.First()
@@ -67,8 +55,8 @@ func Has(value interface{}, list *List) bool {
 		if first.Val == value {
 			return true
 		} else {
-			if first.next != nil {
-				first = first.next
+			if first.Next != nil {
+				first = first.Next
 			} else {
 				return false
 			}
@@ -79,41 +67,41 @@ func Has(value interface{}, list *List) bool {
 }
 
 func Remove(value interface{}, list *List) *List {
-	list.locker.RLock()
+	list.Locker.RLock()
 
-	if list.head == nil {
+	if list.Head == nil {
 		return list
 	}
 
-	list.locker.RUnlock()
+	list.Locker.RUnlock()
 
-	list.locker.RLock()
+	list.Locker.RLock()
 	first := list.First()
-	last := list.Last()
-	list.locker.RUnlock()
-	list.locker.Lock()
-	defer list.locker.Unlock()
+	last := list.Last
+	list.Locker.RUnlock()
+	list.Locker.Lock()
+	defer list.Locker.Unlock()
 
 	for {
-		if last.next == nil {
+		if last.Next == nil {
 			return list
 		}
 
 		if first.Val == value {
-			first.prev.next = first.next
-			first.next.prev = first.prev
-			first.prev = nil
-			first.next = nil
+			first.Prev.Next = first.Next
+			first.Next.Prev = first.Prev
+			first.Prev = nil
+			first.Next = nil
 			first.Val = nil
-			first.list = nil
-			list.len--
+			first.List = nil
+			list.Len--
 			return list
 		} else {
-			first = first.next
+			first = first.Next
 		}
 	}
 }
 
 func Length(list *List) int {
-	return list.len
+	return list.Len
 }
