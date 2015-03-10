@@ -16,12 +16,6 @@ type Item struct {
 	List *List
 }
 
-func New() *List {
-	list := &List{}
-	list.Len = 0
-	return list
-}
-
 func Insert(value interface{}, list *List) *List {
 	newItem := &Item{
 		Val:  value,

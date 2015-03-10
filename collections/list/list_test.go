@@ -2,8 +2,9 @@ package list
 
 import "testing"
 
-func Test_New(t *testing.T) {
-	list := New()
+func Test_List(t *testing.T) {
+	list := &List{}
+
 	list = Insert(1, list)
 	list = Insert(2, list)
 	list = Insert(3, list)
