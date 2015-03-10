@@ -41,15 +41,11 @@ func Insert(value interface{}, list *List) *List {
 	return list
 }
 
-func (list *List) First() *Item {
-	return list.Head
-}
-
 func Has(value interface{}, list *List) bool {
 	if list.Head == nil {
 		return false
 	}
-	first := list.First()
+	first := list.Head
 
 	for {
 		if first.Val == value {
@@ -76,7 +72,7 @@ func Remove(value interface{}, list *List) *List {
 	list.Locker.RUnlock()
 
 	list.Locker.RLock()
-	first := list.First()
+	first := list.Head
 	last := list.Tail
 	list.Locker.RUnlock()
 	list.Locker.Lock()
